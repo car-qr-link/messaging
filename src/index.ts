@@ -1,16 +1,20 @@
-import { MessageReceived, NotificationChannel, SendMessage } from "@car-qr-link/apis";
+import { MessageReceived, NotificationChannel, SendMessage, SendMessageSchema } from "@car-qr-link/apis";
 import { config } from "./config";
-import { createClient, RedisClient } from "./queue";
+import { SmsGatewayClient } from "./gateway";
+import { createClient } from "./queue";
 
 async function main() {
-    const client = createClient(config.BROKER_URL);
-    await client.start();
+    const queue = createClient(config.BROKER_URL);
+    const gateway = new SmsGatewayClient(config.GATEWAY_URL);
 
-    const unsubscribe = await client.subscribe<SendMessage>(config.SEND_QUEUE, async (queueName, message) => {
+    await queue.start();
+
+    const unsubscribe = await queue.subscribe<SendMessage>(config.SEND_QUEUE, async (queueName, message) => {
         console.log('Received message:', message);
+        console.log(SendMessageSchema.validate(message));
 
-        client.publish<MessageReceived>(config.RECEIVED_QUEUE, {
-            channel: NotificationChannel.Sms,
+        await queue.publish<MessageReceived>(config.RECEIVED_QUEUE, {
+            channel: NotificationChannel.Phone,
             message: message.message,
             from: message.to,
         });
@@ -22,7 +26,7 @@ async function main() {
         unsubscribe();
         console.info('Bye!');
 
-        await client.close();
+        await queue.close();
         process.exit(0);
     });
 

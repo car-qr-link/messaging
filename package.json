@@ -24,8 +24,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@car-qr-link/apis": "github:car-qr-link/apis",
-    "android-sms-gateway": "^2.0.0",
+    "@car-qr-link/apis": "github:car-qr-link/apis#messaging/validation",
     "dotenv": "^16.4.5",
     "redis": "^4.7.0"
   }
