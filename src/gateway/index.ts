@@ -1,17 +1,4 @@
-// import Client from "android-sms-gateway";
 import { URL } from "url";
-
-const httpAdapter = {
-    get: async function <T>(url: string, headers?: Record<string, string>): Promise<T> {
-        return fetch(url, { headers }).then(response => response.json());
-    },
-    post: async function <T>(url: string, body: any, headers?: Record<string, string>): Promise<T> {
-        return fetch(url, { headers, method: 'POST', body: JSON.stringify(body) }).then(response => response.json());
-    },
-    delete: async function <T>(url: string, headers?: Record<string, string>): Promise<T> {
-        return fetch(url, { headers, method: 'DELETE' }).then(response => response.json());
-    }
-};
 
 export interface OutgoingMessage {
     to: string
@@ -28,22 +15,26 @@ export class SmsGatewayClient {
     // protected readonly client;
 
     public constructor(protected readonly gatewayUrl: string) {
-        const url = new URL(gatewayUrl);
-
-        // this.client = new Client(
-        //     url.username,
-        //     url.password,
-        //     httpAdapter,
-        //     `${url.origin}${url.pathname}`
-        // );
     }
 
     public async send(message: OutgoingMessage): Promise<void> {
-        // await this.client.send({
-        //     message: message.text,
-        //     phoneNumbers: [
-        //         message.to
-        //     ]
-        // });
+        const payload = {
+            message: message.text,
+            phoneNumbers: [message.to],
+        };
+
+        const response = await fetch(new URL('message', this.gatewayUrl).toString(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to send message: ${response.statusText}`);
+        }
+
+        console.log('Sent message:', await response.json());
     }
 }
