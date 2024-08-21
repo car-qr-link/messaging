@@ -1,5 +1,5 @@
 {
-  "name": "messaging-sms",
+  "name": "@car-qr-link/messaging-sms",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
