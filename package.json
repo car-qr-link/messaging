@@ -1,0 +1,32 @@
+{
+  "name": "messaging-sms",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sms",
+    "messaging",
+    "carqr",
+    "car-qr-link"
+  ],
+  "author": "Aleksandr Soloshenko <admin@carqr.link>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^22.4.1",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@car-qr-link/apis": "github:car-qr-link/apis",
+    "android-sms-gateway": "^2.0.0",
+    "dotenv": "^16.4.5",
+    "redis": "^4.7.0"
+  }
+}
