@@ -2,8 +2,10 @@ import { NotificationChannel, SendMessage, SendMessageSchema } from "@car-qr-lin
 import { config } from "./config";
 import { SmsGatewayClient } from "./gateway";
 import { createClient } from "./queue";
+import { createLogger } from "./logger";
 
 async function main() {
+    const logger = createLogger();
     const queue = createClient(config.BROKER_URL);
     const gateway = new SmsGatewayClient(config.GATEWAY_URL);
 
@@ -12,34 +14,36 @@ async function main() {
     const unsubscribe = await queue.subscribe<SendMessage>(config.SEND_QUEUE, async (queueName, message) => {
         const { error } = SendMessageSchema.validate(message);
         if (error) {
-            console.error("Invalid message:", error);
+            logger.error("Invalid message:", error);
             return;
         }
 
         if (message.channel !== NotificationChannel.Phone) {
-            console.error("Unsupported channel:", message.channel);
+            logger.error("Unsupported channel", message);
             return;
         }
 
-        console.log('Received message:', message);
+        logger.info('Message received', message);
 
         await gateway.send({
             to: message.to,
             text: message.message,
         });
+
+        logger.info('Message sent', message);
     });
-    console.info(`Listening on ${config.SEND_QUEUE}...`);
+    logger.info(`Listening on ${config.SEND_QUEUE}...`);
 
     process.on('SIGINT', async () => {
-        console.info('Shutting down...');
+        logger.info('Shutting down...');
         unsubscribe();
-        console.info('Bye!');
-
         await queue.close();
+
+        logger.info('Bye!');
         process.exit(0);
     });
 
-    console.info('Ready!');
+    logger.info('Ready!');
 }
 
 main();
