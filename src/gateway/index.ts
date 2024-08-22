@@ -12,9 +12,13 @@ export interface IncomingMessage {
 }
 
 export class SmsGatewayClient {
-    // protected readonly client;
+    protected readonly baseUrl: string;
+    protected readonly authorization: string;
 
-    public constructor(protected readonly gatewayUrl: string) {
+    public constructor(gatewayUrl: string) {
+        const url = new URL(gatewayUrl);
+        this.baseUrl = `${url.origin}${url.pathname}`;
+        this.authorization = Buffer.from(`${url.username}:${url.password}`).toString('base64');
     }
 
     public async send(message: OutgoingMessage): Promise<void> {
@@ -23,10 +27,11 @@ export class SmsGatewayClient {
             phoneNumbers: [message.to],
         };
 
-        const response = await fetch(new URL('message', this.gatewayUrl).toString(), {
+        const response = await fetch(new URL('message', this.baseUrl), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Basic ${this.authorization}`,
             },
             body: JSON.stringify(payload),
         });
