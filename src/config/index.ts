@@ -13,5 +13,5 @@ export const config: Config = {
     SEND_QUEUE: process.env.SEND_QUEUE || 'messages:send:sms',
     RECEIVED_QUEUE: process.env.RECEIVED_QUEUE || 'messages:received',
 
-    GATEWAY_URL: process.env.GATEWAY_URL || 'https://sms.capcom.me/api/3rdparty/v1',
+    GATEWAY_URL: process.env.GATEWAY_URL || 'https://sms.capcom.me/api/3rdparty/v1/',
 }
