@@ -18,7 +18,7 @@
   "author": "Aleksandr Soloshenko <admin@carqr.link>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^22.4.1",
+    "@types/node": "^22.5.1",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
@@ -26,6 +26,7 @@
   "dependencies": {
     "@car-qr-link/apis": "github:car-qr-link/apis#messaging/validation",
     "dotenv": "^16.4.5",
+    "joi": "^17.13.3",
     "pino": "^9.3.2",
     "redis": "^4.7.0"
   }

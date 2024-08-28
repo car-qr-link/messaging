@@ -21,9 +21,9 @@ export class RedisClient implements QueueClient {
         options?: SubscribeOptions
     ): Promise<() => void> {
         const readNext = async () => {
-            let interval = options?.intervalMs || 1000;
+            let interval = options?.interval || 1;
             try {
-                const message = await this.client.brPop(queueName, options?.waitTimeMs || 500);
+                const message = await this.client.brPop(queueName, options?.waitTime || 0.5);
                 if (!message) {
                     return;
                 }

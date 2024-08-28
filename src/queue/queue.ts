@@ -6,23 +6,23 @@ export interface QueueClient {
 }
 
 export class SubscribeOptions {
-    public readonly intervalMs: number;
-    public readonly waitTimeMs: number;
+    public readonly interval: number;
+    public readonly waitTime: number;
 
-    public constructor(intervalMs: number, waitTimeMs: number) {
-        if (waitTimeMs > intervalMs) {
+    public constructor(interval: number, waitTime: number) {
+        if (waitTime > interval) {
             throw new Error('waitTime must be less than interval');
         }
 
-        if (waitTimeMs <= 0) {
+        if (waitTime <= 0) {
             throw new Error('waitTime must be greater than or equal to 0');
         }
 
-        if (intervalMs <= 0) {
+        if (interval <= 0) {
             throw new Error('interval must be greater than or equal to 0');
         }
 
-        this.intervalMs = intervalMs;
-        this.waitTimeMs = waitTimeMs;
+        this.interval = interval;
+        this.waitTime = waitTime;
     }
 }
