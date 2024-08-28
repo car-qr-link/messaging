@@ -31,10 +31,15 @@ export class SenderService {
 
             this.logger.info('Message received', message);
 
-            await this.gateway.send({
-                to: message.to,
-                text: message.message,
-            });
+            try {
+                await this.gateway.send({
+                    to: message.to,
+                    text: message.message,
+                });
+            } catch (e) {
+                this.logger.error('Failed to send message', { error: e });
+            }
+
 
             this.logger.info('Message sent', message);
         });
