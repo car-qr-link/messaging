@@ -1,17 +1,9 @@
+import { MessageReceived, NotificationChannel } from "@car-qr-link/apis";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
+import { promisify } from "util";
 import { Logger } from "../logger";
 import { QueueClient } from "../queue";
-import { promisify } from "util";
-
-interface RequestBody {
-    event: string;
-}
-
-interface WebhookPayload {
-    message: string;
-    phoneNumber: string;
-    receivedAt: string;
-}
+import { WebhookRequest, WebhookRequestSchema } from "./dto";
 
 export class ReceiverService {
     private httpServer: Server | null;
@@ -27,16 +19,15 @@ export class ReceiverService {
     }
 
     public async start() {
-        this.httpServer = createServer(async (req, res) => {
-            try {
-                await this.handler(req, res);
-            } catch (error: any) {
-                this.logger.error('Error handling request', error);
+        this.httpServer = createServer((req, res) => {
+            this.handler(req, res)
+                .catch((error: any) => {
+                    this.logger.error('Error handling request', error);
 
-                res.writeHead(500);
-                res.write('Internal server error');
-                res.end();
-            }
+                    res.writeHead(500);
+                    res.write('Internal server error');
+                    res.end();
+                });
         });
 
         this.httpServer.listen(this.port, () => {
@@ -46,7 +37,7 @@ export class ReceiverService {
         this.logger.info('ReceiverService started');
     }
 
-    private async handler(req: IncomingMessage, res: ServerResponse) {
+    private async handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
         this.logger.info('Request received', req);
 
         const contentType = req.headers['content-type'] || '';
@@ -59,23 +50,37 @@ export class ReceiverService {
 
         const body = await new Promise<string>((resolve, reject) => {
             let data = '';
-            req.on('data', (chunk) => {
+            req.on('data', (chunk: any) => {
                 data += chunk;
             });
             req.on('end', () => {
                 resolve(data);
             });
-            req.on('error', (err) => {
+            req.on('error', (err: any) => {
                 reject(err);
             });
         });
 
-        this.logger.info('Request body', { body: JSON.parse(body) });
+        const json = JSON.parse(body) as WebhookRequest;
+        const { error } = WebhookRequestSchema.validate(json, { allowUnknown: true });
 
-        // await this.queue.publish(
-        //     this.queueName,
-        //     req
-        // );
+        if (error) {
+            this.logger.error('Invalid request', { error });
+
+            res.writeHead(400);
+            res.write('Bad request');
+            res.end();
+            return;
+        }
+
+        await this.queue.publish<MessageReceived>(
+            this.queueName,
+            {
+                channel: NotificationChannel.Phone,
+                message: json.payload.message,
+                from: json.payload.phoneNumber,
+            }
+        );
 
         res.writeHead(200);
         res.write('OK');

@@ -1,11 +1,9 @@
-import { createServer } from "http";
 import { config } from "./config";
 import { SmsGatewayClient } from "./gateway";
 import { createLogger } from "./logger";
 import { createClient } from "./queue";
-import { SenderService } from "./services/sender";
-import { promisify } from "util";
 import { ReceiverService } from "./services/receiver";
+import { SenderService } from "./services/sender";
 
 async function main() {
     const logger = createLogger();
