@@ -1,7 +1,6 @@
 import { NotificationChannel, SendMessage, SendMessageSchema } from "@car-qr-link/apis";
+import { Logger, QueueClient } from "@car-qr-link/messaging-base";
 import { SmsGatewayClient } from "../gateway";
-import { Logger } from "../logger";
-import { QueueClient } from "../queue";
 
 export class SenderService {
     private unsubscribe: (() => void) | null;

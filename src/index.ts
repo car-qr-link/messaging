@@ -1,13 +1,12 @@
+import { createLogger, createQueueClient } from "@car-qr-link/messaging-base";
 import { config } from "./config";
 import { SmsGatewayClient } from "./gateway";
-import { createLogger } from "./logger";
-import { createClient } from "./queue";
 import { ReceiverService } from "./services/receiver";
 import { SenderService } from "./services/sender";
 
 async function main() {
     const logger = createLogger();
-    const queue = createClient(config.BROKER_URL);
+    const queue = createQueueClient(config.BROKER_URL);
     const gateway = new SmsGatewayClient(config.GATEWAY_URL);
 
     const sendService = new SenderService(

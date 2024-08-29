@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@car-qr-link/apis": "github:car-qr-link/apis#messaging/validation",
+    "@car-qr-link/messaging-base": "github:car-qr-link/messaging-base",
     "dotenv": "^16.4.5",
     "joi": "^17.13.3",
     "pino": "^9.3.2",
