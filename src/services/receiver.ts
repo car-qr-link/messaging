@@ -1,8 +1,7 @@
 import { MessageReceived, NotificationChannel } from "@car-qr-link/apis";
+import { Logger, QueueClient } from "@car-qr-link/messaging-base";
 import { createServer, IncomingMessage, Server, ServerResponse } from "http";
 import { promisify } from "util";
-import { Logger } from "../logger";
-import { QueueClient } from "../queue";
 import { WebhookRequest, WebhookRequestSchema } from "./dto";
 
 export class ReceiverService {
