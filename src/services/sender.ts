@@ -38,8 +38,8 @@ export class SenderService {
                 });
             } catch (e) {
                 this.logger.error('Failed to send message', { error: e });
+                return;
             }
-
 
             this.logger.info('Message sent', message);
         });

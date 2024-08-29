@@ -2,15 +2,35 @@ import { Logger } from "./logger";
 
 export class ConsoleAdapter implements Logger {
     debug(message: string, context?: object): void {
-        console.debug(message, context || '');
+        console.debug(
+            new Date(),
+            '[DEBUG]',
+            message,
+            context || ''
+        );
     }
     info(message: string, context?: object): void {
-        console.info(message, context || '');
+        console.info(
+            new Date(),
+            '[INFO]',
+            message,
+            context || ''
+        );
     }
     warn(message: string, context?: object): void {
-        console.warn(message, context || '');
+        console.warn(
+            new Date(),
+            '[WARN]',
+            message,
+            context || ''
+        );
     }
     error(message: string, context?: object): void {
-        console.error(message, context || '');
+        console.error(
+            new Date(),
+            '[ERROR]',
+            message,
+            context || ''
+        );
     }
 }
